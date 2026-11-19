@@ -1,0 +1,41 @@
+# Git - Keil MDK / STM32CubeMX 工程基础版本
+# 基础工程: STM32F103-W5500-WebFont
+
+# ---- Keil 编译产物 ----
+*.o
+*.d
+*.crf
+*.axf
+*.elf
+*.hex
+*.bin
+*.s19
+*.map
+*.htm
+*.html
+*.lnp
+*.sct
+*.dep
+*.lst
+*.bak
+*.tmp
+*.log
+*.build_log.htm
+
+# Keil 输出目录（整目录为编译产物，不纳入版本控制）
+MDK-ARM/NET_test/
+MDK-ARM/DebugConfig/
+
+# ---- J-Link / 调试器本地配置 ----
+MDK-ARM/JLinkLog.txt
+MDK-ARM/JLinkSettings.ini
+
+# ---- Windows ----
+Thumbs.db
+Desktop.ini
+desktop.ini
+
+# ---- VS Code / 编辑器 ----
+.vscode/
+*.code-workspace
+*~
