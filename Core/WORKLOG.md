@@ -309,6 +309,45 @@
 - 遗留风险 / 待办：需用户提供 GitHub 仓库地址后执行 `git remote add origin <url>`、`git add .`、`git commit`、`git push -u origin main`；未执行提交。
 - 关联记录：19、20
 
+### [22] 配置 GitHub 远端并暂存全部工程文件
+- 时间：2026-11-19 HH:mm（精确时分未记录，待确认）
+- 类型：配置调整
+- 触发来源：用户提供仓库地址「https://github.com/HiBO-074300/STM32F103-W5500-WebFont，你自己添加」
+- 问题现象 / 需求描述：本地仓库已初始化但无远端，工程文件未暂存，无法推送 GitHub。
+- 根本原因：记录 21 仅执行 `git init`，等待用户提供仓库地址。
+- 改动位置：`.git/config`（新增 remote）、Git 暂存区
+- 改动内容：执行 `git remote add origin https://github.com/HiBO-074300/STM32F103-W5500-WebFont.git`；执行 `git add .` 暂存 940 个文件。
+- 影响范围：Git 元数据与暂存区；不改动源码内容。
+- 验证方式：`git remote -v` 显示 origin 的 fetch/push 地址正确；`git diff --cached --name-only` 统计 940 个文件；6 个 ioLibrary 文件出现 LF→CRLF 警告（仅换行符提示，不影响内容）。
+- 遗留风险 / 待办：无
+- 关联记录：19、23
+
+### [23] 创建基础版本初始提交
+- 时间：2026-11-19 HH:mm（精确时分未记录，待确认）
+- 类型：配置调整
+- 触发来源：同记录 22（用户授权「你自己添加」）
+- 问题现象 / 需求描述：暂存的 940 个文件尚未形成提交。
+- 根本原因：新仓库无 commit。
+- 改动位置：Git 提交历史
+- 改动内容：执行 `git commit -m 'base: STM32F103-W5500-WebFont initial project'`，生成提交 `6f1707d`。
+- 影响范围：Git 提交历史；不改动工作区文件。
+- 验证方式：`git --no-pager log -1 --format='%h %s'` 显示 `6f1707d base: STM32F103-W5500-WebFont initial project`；`git status --short` 为空。
+- 遗留风险 / 待办：无
+- 关联记录：22、24
+
+### [24] 推送 master 分支到 GitHub 并建立跟踪
+- 时间：2026-11-19 HH:mm（精确时分未记录，待确认）
+- 类型：配置调整
+- 触发来源：同记录 22
+- 问题现象 / 需求描述：本地提交未推送到远端，GitHub 仓库为空。
+- 根本原因：未执行 push。
+- 改动位置：GitHub 远端仓库 `HiBO-074300/STM32F103-W5500-WebFont` 的 `master` 分支
+- 改动内容：执行 `git push -u origin master`，推送提交 `6f1707d`，建立 `master` 跟踪 `origin/master`。
+- 影响范围：GitHub 远端仓库；不改变本地源码。
+- 验证方式：`git push` 输出 `[new branch] master -> master` 与 `branch 'master' set up to track 'origin/master'`；`git rev-parse HEAD` 与 `git rev-parse origin/master` 均为 `6f1707d1ce9e2cc96fd0e3fb84b1b5136707c164`；`git status --short` 为空。PowerShell 将 git 进度输出（stderr）显示为 `RemoteException`，但退出码 0 且远端 HEAD 一致，推送成功。
+- 遗留风险 / 待办：GitHub 仓库默认分支可能为 `main`，本工程推送分支为 `master`；如需以 `main` 为默认分支，需在 GitHub 网页端调整或本地重命名分支后重推。
+- 关联记录：22、23
+
 ---
 
 ## 变更汇总表
@@ -336,6 +375,9 @@
 | 19 | 配置调整 | 新增 .gitignore 排除 Keil 编译产物 | `.gitignore` | 已完成 |
 | 20 | 配置调整 | 新增 README.md 作为基础工程说明 | `README.md` | 已完成 |
 | 21 | 配置调整 | 工程根目录初始化 Git 仓库 | `.git/` | 已完成 |
+| 22 | 配置调整 | 配置 GitHub 远端并暂存全部工程文件 | `.git/config`、暂存区 | 已完成 |
+| 23 | 配置调整 | 创建基础版本初始提交 `6f1707d` | Git 提交历史 | 已完成 |
+| 24 | 配置调整 | 推送 master 分支到 GitHub 并建立跟踪 | GitHub 远端仓库 | 已完成 |
 
 ## 当前累计改动清单
 
@@ -362,3 +404,6 @@
 | 19 | 配置调整 | 新增 .gitignore 排除 Keil 编译产物 | `.gitignore` | 已完成 |
 | 20 | 配置调整 | 新增 README.md 作为基础工程说明 | `README.md` | 已完成 |
 | 21 | 配置调整 | 工程根目录初始化 Git 仓库 | `.git/` | 已完成 |
+| 22 | 配置调整 | 配置 GitHub 远端并暂存全部工程文件 | `.git/config`、暂存区 | 已完成 |
+| 23 | 配置调整 | 创建基础版本初始提交 `6f1707d` | Git 提交历史 | 已完成 |
+| 24 | 配置调整 | 推送 master 分支到 GitHub 并建立跟踪 | GitHub 远端仓库 | 已完成 |
