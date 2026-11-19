@@ -12,16 +12,20 @@
 
 ```
 .
-├── Core/
-│   ├── Inc/              # 应用层头文件
-│   ├── Src/              # 应用层源码（main、网络、字库、SPI）
-│   ├── ioLibrary/        # WIZnet W5500 驱动
-│   ├── AGENTS.md         # AI 协作规则
-│   └── WORKLOG.md        # 工作日志（按 AGENTS.md 记录）
-├── Drivers/              # STM32 HAL + CMSIS
-├── MDK-ARM/              # Keil 工程（NET_test.uvprojx）
-├── NET_test.ioc          # STM32CubeMX 配置
-└── README.md
+├── README.md             # 仓库级说明（本文件）
+├── .gitignore            # Git 忽略规则
+├── base/                 # 基础工程本体（base 版本）
+│   ├── Core/
+│   │   ├── Inc/          # 应用层头文件
+│   │   ├── Src/          # 应用层源码（main、网络、字库、SPI）
+│   │   ├── ioLibrary/    # WIZnet W5500 驱动
+│   │   ├── AGENTS.md     # AI 协作规则
+│   │   └── WORKLOG.md    # 工作日志（按 AGENTS.md 记录）
+│   ├── Drivers/          # STM32 HAL + CMSIS
+│   ├── MDK-ARM/          # Keil 工程（NET_test.uvprojx）
+│   ├── NET_test.ioc      # STM32CubeMX 配置
+│   └── .mxproject        # CubeMX 工程配置
+└── variants/             # 后续变种功能预留目录
 ```
 
 ## 硬件引脚
@@ -38,11 +42,11 @@
 
 ## 编译与运行
 
-1. 用 Keil 打开 `MDK-ARM/NET_test.uvprojx`。
+1. 用 Keil 打开 `base/MDK-ARM/NET_test.uvprojx`。
 2. 编译下载到 STM32F103C8（64KB Flash / 20KB RAM）。
 3. PC 设置同网段（如 `192.168.97.1`），浏览器访问 `http://192.168.97.138/`。
 
-网络参数在 `Core/Inc/w5500_port.h` 的 `NET_*_ADDR` 宏中修改。
+网络参数在 `base/Core/Inc/w5500_port.h` 的 `NET_*_ADDR` 宏中修改。
 
 ## 关键接口
 
@@ -53,6 +57,7 @@
 ## 派生变种
 
 基于本工程创建新功能时，建议：
-- 在 `Core/Src` / `Core/Inc` 增加独立模块文件，不改 base 模块；
-- 在 `Core/WORKLOG.md` 中以新编号记录改动，不覆盖历史条目；
+- 在 `variants/` 下创建独立变种目录，从 `base/` 复制所需文件，不改 base 本体；
+- 变种内的源码在 `Core/Src` / `Core/Inc` 增加独立模块文件；
+- 在 `base/Core/WORKLOG.md` 中以新编号记录改动，不覆盖历史条目；
 - 使用 Git 分支管理不同变种，base 分支保持本状态。

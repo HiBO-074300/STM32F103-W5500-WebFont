@@ -361,6 +361,23 @@
 - 遗留风险 / 待办：无（记录 25 本身随下一次日志同步提交推送，形成收尾；避免无限递归，本条为最后一次日志同步记录）。
 - 关联记录：23、24
 
+### [26] 将基础工程本体移入 base/ 目录分层
+- 时间：2026-11-19 HH:mm（精确时分未记录，待确认）
+- 类型：重构优化
+- 触发来源：用户「我觉得应该是不是在建一层目录」并确认目录名「base/」
+- 问题现象 / 需求描述：仓库根目录直接摊开 Core/、Drivers/、MDK-ARM/ 等，后续变种功能会使顶层混乱，需将基础工程本体与仓库级内容/未来变种分离。
+- 根本原因：初版 GitHub 基础工程采用扁平结构，未预留变种分层。
+- 改动位置：`base/`（新建），原 `Core/`、`Drivers/`、`MDK-ARM/`、`NET_test.ioc`、`.mxproject` 移入其中；仓库根目录保留 `README.md`、`.gitignore`、`.git/`；新增 `variants/` 预留目录
+- 改动内容：
+  - 用 `git mv` 移动 `Drivers/`、`.mxproject`、`NET_test.ioc`；`Core/`、`MDK-ARM/` 因 IDE 工作区占用导致整目录 `git mv` 失败（Permission denied），改用临时脚本逐文件 `git mv`（35 个 Core 文件、7 个 MDK 文件）后删除脚本与空目录。
+  - 更新 `.gitignore`：`MDK-ARM/...` → `base/MDK-ARM/...`。
+  - 更新 `README.md`：目录结构改为 `base/` 分层，编译/源码路径加 `base/` 前缀，派生说明改为在 `variants/` 下创建变种。
+  - 创建 `variants/` 预留目录（空目录，Git 不跟踪，需放 .gitkeep 才可提交）。
+- 影响范围：仓库目录结构；Keil 工程内引用均为相对路径 `../Core/...`、`../Drivers/...`，移动后相对关系不变，已验证所有引用路径存在；**IDE 工作区路径 `.../NET_test/Core` 失效，需重新打开到 `.../NET_test/base/Core`**。
+- 验证方式：`git status --short` 显示 938 个重命名；`base/Core` 35 文件、`base/MDK-ARM` 7 文件；`search_content` 确认 `.uvprojx` 的 IncludePath 与 FilePath 均为 `../Core/`、`../Drivers/` 且目标目录存在；`gcc -fsyntax-only` 未重跑（源码内容未变）。
+- 遗留风险 / 待办：根目录残留空目录 `Core/`、`MDK-ARM/`（IDE 占用无法删除，空目录不被 Git 跟踪，不影响仓库）；`variants/` 为空未纳入版本控制；需在 Keil/CodeBuddy 重新打开工作区到 `base/Core`/`base/MDK-ARM` 验证编译。
+- 关联记录：21、27
+
 ---
 
 ## 变更汇总表
@@ -392,6 +409,7 @@
 | 23 | 配置调整 | 创建基础版本初始提交 `6f1707d` | Git 提交历史 | 已完成 |
 | 24 | 配置调整 | 推送 master 分支到 GitHub 并建立跟踪 | GitHub 远端仓库 | 已完成 |
 | 25 | 配置调整 | 补提交工作日志 22-24 使本地与远端同步 | `Core/WORKLOG.md`、Git 提交历史 | 已完成 |
+| 26 | 重构优化 | 将基础工程本体移入 base/ 目录分层 | `base/`、`.gitignore`、`README.md` | 已完成 |
 
 ## 当前累计改动清单
 
@@ -422,3 +440,4 @@
 | 23 | 配置调整 | 创建基础版本初始提交 `6f1707d` | Git 提交历史 | 已完成 |
 | 24 | 配置调整 | 推送 master 分支到 GitHub 并建立跟踪 | GitHub 远端仓库 | 已完成 |
 | 25 | 配置调整 | 补提交工作日志 22-24 使本地与远端同步 | `Core/WORKLOG.md`、Git 提交历史 | 已完成 |
+| 26 | 重构优化 | 将基础工程本体移入 base/ 目录分层 | `base/`、`.gitignore`、`README.md` | 已完成 |

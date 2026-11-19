@@ -23,12 +23,12 @@
 *.build_log.htm
 
 # Keil 输出目录（整目录为编译产物，不纳入版本控制）
-MDK-ARM/NET_test/
-MDK-ARM/DebugConfig/
+base/MDK-ARM/NET_test/
+base/MDK-ARM/DebugConfig/
 
 # ---- J-Link / 调试器本地配置 ----
-MDK-ARM/JLinkLog.txt
-MDK-ARM/JLinkSettings.ini
+base/MDK-ARM/JLinkLog.txt
+base/MDK-ARM/JLinkSettings.ini
 
 # ---- Windows ----
 Thumbs.db
