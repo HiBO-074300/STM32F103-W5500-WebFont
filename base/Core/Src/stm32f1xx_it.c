@@ -307,10 +307,10 @@ void USART2_IRQHandler(void)
 /**
   * @brief This function handles EXTI line 0 interrupt (W5500 INTn, PA0).
   */
-void EXTI0_IRQHandler(void)
-{
-  HAL_GPIO_EXTI_IRQHandler(INT_Pin);
-}
+//void EXTI0_IRQHandler(void)
+//{
+//  HAL_GPIO_EXTI_IRQHandler(INT_Pin);
+//}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
