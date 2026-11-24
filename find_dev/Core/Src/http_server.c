@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    http_server.c
-  * @brief   极简 HTTP 服务：在 192.168.97.138:80 提供测试页与状态接口
+  * @brief   极简 HTTP 服务：在当前 W5500 IP:80 提供测试页与状态接口
   *
   *          路由：
   *            GET /               -> 测试页
@@ -13,6 +13,7 @@
   */
 #include "http_server.h"
 #include "w5500_port.h"
+#include "netcfg.h"
 #include "Fontlib.h"
 #include "main.h"
 #include "w5500.h"
@@ -57,7 +58,10 @@ static const char HTTP_PAGE[] =
     "<div id='grid'></div>\n"
     "<div style='margin-top:12px;color:#8b949e'>GBK code: <code id='code'>-</code></div>\n"
     "<table>\n"
-    "<tr><td>IP Address</td><td>192.168.97.138</td></tr>\n"
+    "<tr><td>IP Address</td><td id='ip'>-</td></tr>\n"
+    "<tr><td>子网掩码</td><td id='sn'>-</td></tr>\n"
+    "<tr><td>网关</td><td id='gw'>-</td></tr>\n"
+    "<tr><td>IP 模式</td><td id='dhcp'>-</td></tr>\n"
     "<tr><td>Requests</td><td id='req'>-</td></tr>\n"
     "<tr><td>Uptime</td><td id='upt'>-</td></tr>\n"
     "<tr><td>Link</td><td id='link'>-</td></tr>\n"
@@ -95,6 +99,10 @@ static const char HTTP_PAGE[] =
     "  }).catch(function(e){msg.textContent='请求失败: '+(e&&e.message?e.message:e);});\n"
     "}\n"
     "function refresh(){fetch('/api/status').then(function(r){return r.json();}).then(function(d){\n"
+    "  document.getElementById('ip').textContent=d.ip;\n"
+    "  document.getElementById('sn').textContent=d.sn;\n"
+    "  document.getElementById('gw').textContent=d.gw;\n"
+    "  document.getElementById('dhcp').textContent=d.dhcp?'DHCP':'静态';\n"
     "  document.getElementById('req').textContent=d.requests;\n"
     "  document.getElementById('upt').textContent=d.uptime+' s';\n"
     "  document.getElementById('link').textContent=d.link?'Up':'Down';\n"
@@ -294,7 +302,7 @@ static void http_handle_request(void)
     char *path;
     char *end;
     char *query;
-    char body[128];
+    char body[256];
     int len;
 
     s_requests++;
@@ -326,8 +334,19 @@ static void http_handle_request(void)
 
     if (strcmp(path, "/api/status") == 0)
     {
+        const netcfg_t *cfg = netcfg_get();
+
         len = snprintf(body, sizeof(body),
-                       "{\"ip\":\"192.168.97.138\",\"requests\":%lu,\"uptime\":%lu,\"link\":%u}",
+                       "{\"ip\":\"%u.%u.%u.%u\",\"sn\":\"%u.%u.%u.%u\","
+                       "\"gw\":\"%u.%u.%u.%u\",\"dhcp\":%u,\"status\":%u,"
+                       "\"requests\":%lu,\"uptime\":%lu,\"link\":%u}",
+                       (unsigned)cfg->ip[0], (unsigned)cfg->ip[1],
+                       (unsigned)cfg->ip[2], (unsigned)cfg->ip[3],
+                       (unsigned)cfg->sn[0], (unsigned)cfg->sn[1],
+                       (unsigned)cfg->sn[2], (unsigned)cfg->sn[3],
+                       (unsigned)cfg->gw[0], (unsigned)cfg->gw[1],
+                       (unsigned)cfg->gw[2], (unsigned)cfg->gw[3],
+                       (unsigned)cfg->mode, (unsigned)cfg->status,
                        (unsigned long)s_requests,
                        (unsigned long)((HAL_GetTick() - s_start_tick) / 1000u),
                        (unsigned)w5500_get_link());

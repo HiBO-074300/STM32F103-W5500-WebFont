@@ -424,6 +424,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>discovery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/discovery.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -523,6 +528,11 @@
               <FileName>w5500_port.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/w5500_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>netcfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/netcfg.c</FilePath>
             </File>
             <File>
               <FileName>http_server.c</FileName>

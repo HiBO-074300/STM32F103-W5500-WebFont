@@ -28,7 +28,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "w5500_port.h"
+#include "netcfg.h"
 #include "http_server.h"
+#include "discovery.h"
 #include "flash_spi.h"
 #include "Fontlib.h"
 /* USER CODE END Includes */
@@ -101,7 +103,7 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   FLASH_SPI_Init();
-  /* �ֿ� Flash �״ζ�ȡǰ�ն�һ�Σ������һ���ֶ���ȫ 0xFF */
+  /* 字库 Flash 首次读取前空读一次，避免第一个字读出全 0xFF */
   {
     uint8_t dummy_font[32];
     (void)Read_One_Font(0xA1A1u, dummy_font, FONT_SIZE_15x16);
@@ -110,7 +112,9 @@ int main(void)
   {
     Error_Handler();
   }
+  netcfg_init();
   http_server_init();
+  discovery_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,10 +125,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     http_server_poll();
-    if (w5500_int_event_take() != 0u)
-    {
-      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    }
+    netcfg_poll();
+    discovery_poll();
+    /* 读取并清除网络事件标志；LED 交由 discovery 诊断指示独占 */
+    (void)w5500_int_event_take();
   }
   /* USER CODE END 3 */
 }
